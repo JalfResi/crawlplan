@@ -148,15 +148,28 @@ This is a far better solution; it is also far more performant than anything I've
 */
 
 func New(keywords, proxies []string, pulse *Pulse) (cr []CrawlRule) {
+	/* 
+	NOTE:
+	May have to add a 'last row' check so that I can apply different distribution
+	algorithms e.g distribute remaining keywords across all proxies vs. cluster as
+	many connections to as few proxies as possible.
+	*/
 	var kw int = 0
 	for t := 0; t < int(pulse.Duration.Seconds()); t = t + int(pulse.Frequency.Seconds()) {
 		for _, proxy := range proxies {
 			for conn := 0; conn < pulse.Volume; conn++ {
 				cr = append(cr, CrawlRule{time.Duration(t) * time.Second, net.ParseIP(proxy), conn, keywords[kw]})
 				kw++
+				if kw>=len(keywords) {
+					return
+				}
 			}
 		}
 	}
+	/*
+	NOTE:
+	Could just add sort choice here and be done with it?
+	*/
 	return
 }
 
@@ -195,4 +208,13 @@ func examples(crawlRules []CrawlRule) {
 
 	OrderedBy(Proxy, IncreasingConnections, Start).Sort(crawlRules)
 	fmt.Println("By proxy,<connections,start:\n", crawlRules)
+}
+
+
+func BottomHeavy(cp []CrawlRule) {
+	OrderedBy(Start, Proxy, IncreasingConnections).Sort(cp)	
+}
+
+func TopHeavy(cp []CrawlRule) {
+	OrderedBy(Start, Proxy, IncreasingConnections).Sort(cp)	
 }

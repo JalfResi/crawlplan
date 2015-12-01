@@ -5,6 +5,7 @@ import (
 	"net"
 	"testing"
 	"time"
+	"fmt"
 )
 
 var bottomTests = []struct {
@@ -80,10 +81,18 @@ var bottomTests = []struct {
 
 func Test_BottomDistribution(t *testing.T) {
 	for k, tt := range bottomTests {
-		cp := New(tt.keywordCount, tt.proxyCount, tt.pulse)
-		OrderedBy(start, proxy, increasingConnections).Sort(cp)
+		cp := New(generateLists("keyword", tt.keywordCount), generateLists("proxy", tt.proxyCount), tt.pulse)
+		OrderedBy(Start, Proxy, IncreasingConnections).Sort(cp)
 
 		log.Printf("test %d %v\n", k, cp)
 
 	}
+}
+
+func generateLists(prefix string, count int) []string {
+	var out []string
+	for n:=0; n< count; n++ {
+		out = append(out, fmt.Sprintf("%s-%d", prefix, n))
+	}
+	return out
 }
