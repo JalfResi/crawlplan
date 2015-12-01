@@ -39,9 +39,12 @@ var tests = []struct {
 	// 500s/60s = 8m18s (8m with 18s distributed)
 	// 100 / 8m = 12.5 rounded up = 13 kwps
 	// 13 kwpm for 8m = 100 : 10 proxies = 2 connections per proxy
-	{100, 10, 45, 15, 500, &Pulse{2, time.Duration(62) * time.Second, time.Duration(500) * time.Second}},
+	{100, 10, 45, 15, 500, &Pulse{2, time.Duration(62) * time.Second, time.Duration(496) * time.Second}},
 
 	{4, 3, 60, 60, 300, &Pulse{1, time.Duration(150) * time.Second, time.Duration(300) * time.Second}},
+	
+	
+	{19, 3, 60, 0, 135, &Pulse{4, time.Duration(67) * time.Second, time.Duration(134) * time.Second}},
 }
 
 func Test_FixedDuration(t *testing.T) {

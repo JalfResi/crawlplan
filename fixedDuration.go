@@ -13,7 +13,7 @@ func FixedDuration(keywordCount, proxyCount, avgJobRuntime, minimumDelay, timePe
 
 	// Divide the number of keywords between the number of proxies and round
 	// up. This gives us our keywordCountPerProxy.
-	keywordCountPerProxy := keywordCount / proxyCount
+	keywordCountPerProxy := int(math.Ceil(float64(float64(keywordCount) / float64(proxyCount))))
 
 	// Calculate the total time a keyword will take, including its delay.
 	totalKeywordTime := avgJobRuntime + minimumDelay
@@ -49,6 +49,6 @@ func FixedDuration(keywordCount, proxyCount, avgJobRuntime, minimumDelay, timePe
 	return &Pulse{
 		Volume:    int(math.Ceil(float64(float64(keywordCountPerProxy) / float64(keywordsPerChannel)))),
 		Frequency: time.Duration(tickFrequency) * time.Second,
-		Duration:  time.Duration(timePeriod) * time.Second,
+		Duration:  time.Duration(tickFrequency*keywordsPerChannel) * time.Second,
 	}, nil
 }
