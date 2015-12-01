@@ -24,6 +24,7 @@ import (
 )
 
 var (
+	debug 		  *bool = flag.Bool("debug", false, "Switch on debug mode")
 	keywordFile   *string = flag.String("keywords", "", "Keyword file")
 	proxyFile     *string = flag.String("proxies", "", "proxy file")
 	avgJobRuntime *time.Duration = flag.Duration("avgJobRuntime", time.Duration(60) * time.Second, "Average job runtime in seconds. Defaults to 60")
@@ -79,9 +80,14 @@ func main() {
 		log.Fatal(badAlgorithm)
 	}
 
-	fmt.Printf("Number of connections required for each proxy: %d\n", p.Volume)
-	fmt.Printf("Maximum runtime per keyword: %ds (%s)\n", int(p.Frequency.Seconds()), p.Frequency.String())
-	fmt.Printf("Total duration required to process all keywords: %ds (%s)\n", int(p.Duration.Seconds()), p.Duration.String())
+	if *debug {
+		fmt.Printf("Keywords: %d, %+v\n", len(keywords), keywords)
+		fmt.Printf("Proxies: %d, %+v\n", len(proxies), proxies)
+		fmt.Printf("Pulse: %+v\n", p)
+		fmt.Printf("Number of connections required for each proxy: %d\n", p.Volume)
+		fmt.Printf("Maximum runtime per keyword: %ds (%s)\n", int(p.Frequency.Seconds()), p.Frequency.String())
+		fmt.Printf("Total duration required to process all keywords: %ds (%s)\n", int(p.Duration.Seconds()), p.Duration.String())
+	}
 
 	cp := crawlrate.New(keywords, proxies, p)
 	crawlrate.OrderedBy(crawlrate.Start, crawlrate.Proxy, crawlrate.IncreasingConnections).Sort(cp)
@@ -89,7 +95,7 @@ func main() {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 8, 0, '\t', 0)
 	for _, r := range cp {
-		fmt.Fprintln(w, "[%ds]\t%s\t%d\t%s", r.Time.Seconds(), r.Proxy.String(), r.Conn, r.Keyword)
+		fmt.Fprintf(w, "[%ds]\t%s\t%d\t%s\n", int(r.Time.Seconds()), r.Proxy.String(), r.Conn, r.Keyword)
 	} 
 	w.Flush()
 }
