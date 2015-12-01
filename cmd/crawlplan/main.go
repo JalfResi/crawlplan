@@ -90,7 +90,6 @@ func main() {
 	}
 
 	cp := crawlrate.New(keywords, proxies, p)
-	crawlrate.OrderedBy(crawlrate.Start, crawlrate.Proxy, crawlrate.IncreasingConnections).Sort(cp)
 	
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 8, 0, '\t', 0)

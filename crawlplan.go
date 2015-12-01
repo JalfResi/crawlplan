@@ -90,7 +90,7 @@ func (ms *multiSorter) Sort(crawlRules []CrawlRule) {
 
 // OrderedBy returns a Sorter that sorts using the less functions, in order.
 // Call its Sort method to sort the data.
-func OrderedBy(less ...lessFunc) *multiSorter {
+func orderedBy(less ...lessFunc) *multiSorter {
 	return &multiSorter{
 		less: less,
 	}
@@ -166,55 +166,31 @@ func New(keywords, proxies []string, pulse *Pulse) (cr []CrawlRule) {
 			}
 		}
 	}
-	/*
-	NOTE:
-	Could just add sort choice here and be done with it?
-	*/
+	orderedBy(start, proxy, increasingConnections).Sort(cr)
 	return
 }
 
-func Start(c1, c2 *CrawlRule) bool {
+func start(c1, c2 *CrawlRule) bool {
 	return c1.Time.Seconds() < c2.Time.Seconds()
 }
 
-func Proxy(c1, c2 *CrawlRule) bool {
+func proxy(c1, c2 *CrawlRule) bool {
 	return c1.Proxy.String() < c2.Proxy.String()
 }
 
-func IncreasingConnections(c1, c2 *CrawlRule) bool {
+func increasingConnections(c1, c2 *CrawlRule) bool {
 	return c1.Conn < c2.Conn
 }
 
-func DecreasingConnections(c1, c2 *CrawlRule) bool {
+func decreasingConnections(c1, c2 *CrawlRule) bool {
 	return c1.Conn > c2.Conn // Note: > orders downwards.
-}
-
-func examples(crawlRules []CrawlRule) {
-	// Closures that order the CrawlRule structure.
-
-	// Simple use: Sort by user.
-	OrderedBy(Start).Sort(crawlRules)
-	fmt.Println("By start:\n", crawlRules)
-
-	// More examples.
-	OrderedBy(Start, IncreasingConnections).Sort(crawlRules)
-	fmt.Println("By start,<connections:\n", crawlRules)
-
-	OrderedBy(Start, DecreasingConnections).Sort(crawlRules)
-	fmt.Println("By start,>connections:\n", crawlRules)
-
-	OrderedBy(Proxy, IncreasingConnections).Sort(crawlRules)
-	fmt.Println("By proxy,<connections:\n", crawlRules)
-
-	OrderedBy(Proxy, IncreasingConnections, Start).Sort(crawlRules)
-	fmt.Println("By proxy,<connections,start:\n", crawlRules)
 }
 
 
 func BottomHeavy(cp []CrawlRule) {
-	OrderedBy(Start, Proxy, IncreasingConnections).Sort(cp)	
+	orderedBy(start, proxy, increasingConnections).Sort(cp)	
 }
 
 func TopHeavy(cp []CrawlRule) {
-	OrderedBy(Start, Proxy, IncreasingConnections).Sort(cp)	
+	orderedBy(start, proxy, increasingConnections).Sort(cp)	
 }
