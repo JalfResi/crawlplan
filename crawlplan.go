@@ -152,20 +152,25 @@ func New(keywords, proxies []string, pulse *Pulse) (cr []CrawlRule) {
 	NOTE:
 	May have to add a 'last row' check so that I can apply different distribution
 	algorithms e.g distribute remaining keywords across all proxies vs. cluster as
-	many connections to as few proxies as possible.
+	many connections to as few proxies as possible. Bear in mind that some tests only
+	have a single row, so there is no "last row" to balance. What do we do in those
+	circumstances?
 	*/
 	var kw int = 0
+	
+	outerLoop:
 	for t := 0; t < int(pulse.Duration.Seconds()); t = t + int(pulse.Frequency.Seconds()) {
 		for _, proxy := range proxies {
 			for conn := 0; conn < pulse.Volume; conn++ {
 				cr = append(cr, CrawlRule{time.Duration(t) * time.Second, net.ParseIP(proxy), conn, keywords[kw]})
 				kw++
 				if kw>=len(keywords) {
-					return
+					break outerLoop
 				}
 			}
 		}
 	}
+	
 	orderedBy(start, proxy, increasingConnections).Sort(cr)
 	return
 }
