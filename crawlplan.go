@@ -110,23 +110,15 @@ func (cp CrawlPlan) Map(f func(CrawlRule) CrawlRule) {
     }
 }
 
-/*
-func Distinct(vs CrawlPlan) map[int64]bool {
-    var vsm map[int64]bool
-    var current time.Duration
-    for i, v := range vs {
-        if current == nil {
-            current = v.Time
-        }
-        
-        if v.Time.Seconds() != current.Seconds()  {
-            current = v.Time
-            vsm[v.Time.Seconds()] = true
-        }
+
+func Distinct(vs CrawlPlan) map[float64]bool {
+    vsm := make(map[float64]bool)
+    for _, v := range vs {
+        vsm[v.Time.Seconds()] = true
     }
     return vsm
 }
-*/
+
 
 func start(c1, c2 *CrawlRule) bool {
 	return c1.Time.Seconds() < c2.Time.Seconds()

@@ -10,31 +10,31 @@ import (
 var bottomTests = []struct {
 	keywordCount, proxyCount int
 	pulse                    *Pulse
-	out                      []CrawlRule
+	out                      CrawlPlan
 }{
 	{
 		1, 1, &Pulse{1, time.Duration(60) * time.Second, time.Duration(60) * time.Second},
-		[]CrawlRule{
+		CrawlPlan{
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
 		},
 	},
 	{
 		2, 1, &Pulse{1, time.Duration(60) * time.Second, time.Duration(120) * time.Second},
-		[]CrawlRule{
+		CrawlPlan{
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
 			{time.Duration(60) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-1"},
 		},
 	},
 	{
 		2, 1, &Pulse{2, time.Duration(60) * time.Second, time.Duration(60) * time.Second},
-		[]CrawlRule{
+		CrawlPlan{
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 1, "keyword-1"},
 		},
 	},
 	{
 		3, 1, &Pulse{1, time.Duration(60) * time.Second, time.Duration(180) * time.Second},
-		[]CrawlRule{
+		CrawlPlan{
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
 			{time.Duration(60) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-1"},
 			{time.Duration(120) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-2"},
@@ -42,7 +42,7 @@ var bottomTests = []struct {
 	},
 	{
 		3, 1, &Pulse{2, time.Duration(60) * time.Second, time.Duration(120) * time.Second},
-		[]CrawlRule{
+		CrawlPlan{
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 1, "keyword-1"},
 			{time.Duration(60) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-2"},
@@ -50,7 +50,7 @@ var bottomTests = []struct {
 	},
 	{
 		3, 1, &Pulse{3, time.Duration(60) * time.Second, time.Duration(60) * time.Second},
-		[]CrawlRule{
+		CrawlPlan{
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 1, "keyword-1"},
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 2, "keyword-2"},
@@ -58,7 +58,7 @@ var bottomTests = []struct {
 	},
 	{
 		15, 3, &Pulse{2, time.Duration(60) * time.Second, time.Duration(180) * time.Second},
-		[]CrawlRule{
+		CrawlPlan{
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 1, "keyword-1"},
 			{time.Duration(0) * time.Second, net.ParseIP("127.0.0.1"), 0, "keyword-2"},
@@ -111,7 +111,7 @@ func Test_BottomDistribution(t *testing.T) {
 }
 
 func Test_Distinct(t *testing.T) {
-    var tableCr = []CrawlRule{
+    var tableCr = CrawlPlan{
         {time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
         {time.Duration(60) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-1"},
         {time.Duration(120) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-2"},
