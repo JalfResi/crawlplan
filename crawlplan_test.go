@@ -110,6 +110,25 @@ func Test_BottomDistribution(t *testing.T) {
 	}
 }
 
+func Test_Distinct(t *testing.T) {
+    var tableCr = []CrawlRule{
+        {time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
+        {time.Duration(60) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-1"},
+        {time.Duration(120) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-2"},
+        {time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
+        {time.Duration(60) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-1"},
+        {time.Duration(120) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-2"},
+        {time.Duration(0) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-0"},
+        {time.Duration(60) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-1"},
+        {time.Duration(120) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-2"},
+    }
+    
+    distinctCount := len(Distinct(tableCr))
+    if distinctCount != 3 {
+        t.Errorf("Distinct count wrong. Got: %d Expected: %d\n", distinctCount, 3)
+    }
+}
+
 func generateLists(prefix string, count int) []string {
 	var out []string
 	for n:=0; n< count; n++ {

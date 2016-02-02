@@ -63,11 +63,13 @@ which means:
 
 */
 
+type CrawlPlan []CrawlRule
+
 type CrawlRule struct {
-	Time     time.Duration
-	Proxy net.IP
-	Conn  int
-	Keyword    string
+	Time    time.Duration
+	Proxy   net.IP
+	Conn    int
+	Keyword string
 }
 
 func (cr CrawlRule) String() string {
@@ -148,29 +150,29 @@ This is a far better solution; it is also far more performant than anything I've
 */
 
 func New(keywords, proxies []string, pulse *Pulse) (cr []CrawlRule) {
-	/* 
-	NOTE:
-	May have to add a 'last row' check so that I can apply different distribution
-	algorithms e.g distribute remaining keywords across all proxies vs. cluster as
-	many connections to as few proxies as possible. Bear in mind that some tests only
-	have a single row, so there is no "last row" to balance. What do we do in those
-	circumstances?
+	/*
+		NOTE:
+		May have to add a 'last row' check so that I can apply different distribution
+		algorithms e.g distribute remaining keywords across all proxies vs. cluster as
+		many connections to as few proxies as possible. Bear in mind that some tests only
+		have a single row, so there is no "last row" to balance. What do we do in those
+		circumstances?
 	*/
 	var currentKeyword int = 0
-	
-	outerLoop:
+
+outerLoop:
 	for t := 0; t < int(pulse.Duration.Seconds()); t = t + int(pulse.Frequency.Seconds()) {
 		for _, proxy := range proxies {
 			for conn := 0; conn < pulse.Volume; conn++ {
 				cr = append(cr, CrawlRule{time.Duration(t) * time.Second, net.ParseIP(proxy), conn, keywords[currentKeyword]})
 				currentKeyword++
-				if currentKeyword>=len(keywords) {
+				if currentKeyword >= len(keywords) {
 					break outerLoop
 				}
 			}
 		}
 	}
-	
+
 	orderedBy(start, proxy, increasingConnections).Sort(cr)
 	return
 }
@@ -191,11 +193,47 @@ func decreasingConnections(c1, c2 *CrawlRule) bool {
 	return c1.Conn > c2.Conn // Note: > orders downwards.
 }
 
-
 func BottomHeavy(cp []CrawlRule) {
-	orderedBy(start, proxy, increasingConnections).Sort(cp)	
+	orderedBy(start, proxy, increasingConnections).Sort(cp)
 }
 
 func TopHeavy(cp []CrawlRule) {
-	orderedBy(start, proxy, increasingConnections).Sort(cp)	
+	orderedBy(start, proxy, increasingConnections).Sort(cp)
 }
+
+
+// Filter
+func Filter(vs []CrawlRule, f func(CrawlRule) bool) []CrawlRule {
+    vsf := make([]CrawlRule, 0)
+    for _, v := range vs {
+        if f(v) {
+            vsf = append(vsf, v)
+        }
+    }
+    return vsf
+}
+
+func Map(vs []CrawlRule, f func(CrawlRule) CrawlRule) []CrawlRule {
+    vsm := make([]CrawlRule, len(vs))
+    for i, v := range vs {
+        vsm[i] = f(v)
+    }
+    return vsm
+}
+/*
+func Distinct(vs []CrawlRule) map[int64]bool {
+    var vsm map[int64]bool
+    var current time.Duration
+    for i, v := range vs {
+        if current == nil {
+            current = v.Time
+        }
+        
+        if v.Time.Seconds() != current.Seconds()  {
+            current = v.Time
+            vsm[v.Time.Seconds()] = true
+        }
+    }
+    return vsm
+}
+*/
