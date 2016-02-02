@@ -1,8 +1,8 @@
 /*
 
 Usage:
-	crawlplan --keywords="./keywords.txt" --proxies="./proxies.txt" --avgJobRuntime=60 --minimumDelay=60 --strategy=bottom --algo="duration" --timePeriod=3600
-	crawlplan --keywords="./keywords.txt" --proxies="./proxies.txt" --avgJobRuntime=60 --minimumDelay=60 --strategy=bottom --algo="connections" --maximumConnections=5
+	crawlplan --keywords="./keywords.txt" --proxies="./proxies.txt" --avgJobRuntime=60s --minimumDelay=60s --algorithm="duration" --timePeriod=3600s
+	crawlplan --keywords="./keywords.txt" --proxies="./proxies.txt" --avgJobRuntime=60s --minimumDelay=60s --algorithm="connections" --maximumConnections=5
 
 */
 package main
