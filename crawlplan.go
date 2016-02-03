@@ -93,10 +93,10 @@ outerLoop:
 }
 
 // Filter
-func (cp CrawlPlan) Filter(f func(CrawlRule) bool) CrawlPlan {
+func (cp CrawlPlan) Filter(t float64, f func(float64, CrawlRule) bool) CrawlPlan {
     vsf := make(CrawlPlan, 0)
     for _, v := range cp {
-        if f(v) {
+        if f(t, v) {
             vsf = append(vsf, v)
         }
     }
@@ -111,9 +111,9 @@ func (cp CrawlPlan) Map(f func(CrawlRule) CrawlRule) {
 }
 
 
-func Distinct(vs CrawlPlan) map[float64]bool {
+func (cp CrawlPlan) Distinct() map[float64]bool {
     vsm := make(map[float64]bool)
-    for _, v := range vs {
+    for _, v := range cp {
         vsm[v.Time.Seconds()] = true
     }
     return vsm
