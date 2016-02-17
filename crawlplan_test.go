@@ -123,7 +123,7 @@ func Test_Distinct(t *testing.T) {
         {time.Duration(120) * time.Second, net.ParseIP("127.0.0.0"), 0, "keyword-2"},
     }
     
-    distinctCount := len(Distinct(tableCr))
+    distinctCount := len(tableCr.Distinct())
     if distinctCount != 3 {
         t.Errorf("Distinct count wrong. Got: %d Expected: %d\n", distinctCount, 3)
     }
