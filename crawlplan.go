@@ -93,7 +93,7 @@ outerLoop:
 }
 
 // Filter
-func (cp CrawlPlan) Filter(t float64, f func(float64, CrawlRule) bool) CrawlPlan {
+func (cp CrawlPlan) Filter(t int64, f func(int64, CrawlRule) bool) CrawlPlan {
     vsf := make(CrawlPlan, 0)
     for _, v := range cp {
         if f(t, v) {
@@ -111,12 +111,21 @@ func (cp CrawlPlan) Map(f func(CrawlRule) CrawlRule) {
 }
 
 
-func (cp CrawlPlan) Distinct() map[float64]bool {
-    vsm := make(map[float64]bool)
+func (cp CrawlPlan) Distinct() []int64 {
+    vsm := make(map[int64]bool)
     for _, v := range cp {
-        vsm[v.Time.Seconds()] = true
+        t := int64(v.Time/time.Second)
+        vsm[t] = true
     }
-    return vsm
+
+    // now flip the distinct keys  
+    d := make([]int64, len(vsm))
+    pos := 0
+    for k, _ := range vsm {
+        d[pos] = k
+        pos++
+    }
+    return d
 }
 
 
