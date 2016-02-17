@@ -95,7 +95,7 @@ func main() {
 	w.Init(os.Stdout, 0, 8, 0, '\t', 0)
     fmt.Fprintf(w, "Timestamp\tProxy\tConnection\tKeyword\tRuntime\n")
 	for _, r := range cp {
-		fmt.Fprintf(w, "%ds\t%s\t%d\t%s\t%d\n", int(r.Time.Seconds()), r.Proxy.String(), r.Conn, r.Keyword, int(p.Frequency.Seconds()))
+		fmt.Fprintf(w, "%d\t%s\t%d\t%s\t%d\n", int(r.Time.Seconds()), r.Proxy.String(), r.Conn, r.Keyword, int(p.Frequency.Seconds()))
 	} 
 	w.Flush()
 }
