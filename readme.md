@@ -39,32 +39,42 @@ soon as possible, where as a top heavy crawl plan will favor the top of the
 period.
 
 ### Bottom Heavy
+```
   0s * * * * *
  60s * * * * *
 120s * * *
+```
 
 ### Top Heavy
+```
   0s * * *
  60s * * * * *
 120s * * * * *
+```
 
 Each tick is a proxy and a a connection count e.g.
 
+```
   0s 2 2 2 2 2  -> 10 kwpm
  60s 2 2 2 2 2  -> 10 kwpm
 120s 2 2 2      ->  6 kwpm
+```
 
 Points of interest are how we distribute the final minute. For example, compare 
 the following two crawl plans; one reduces the number of connections across all 
 proxies, whereas the other will reprieve 2 of the proxies from any connections:
 
+```
   0s 2 2 2 2 2  -> 10 kwpm
  60s 2 2 2 2 2  -> 10 kwpm
 120s 2 2 1      ->  5 kwpm
+```
 
+```
   0s 2 2 2 2 2  -> 10 kwpm
  60s 2 2 2 2 2  -> 10 kwpm
 120s 1 1 1 1 1  ->  5 kwpm
+```
 
 ### Crawl Plan calculations
 
