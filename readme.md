@@ -52,7 +52,7 @@ period.
 120s * * * * *
 ```
 
-Each tick is a proxy and a a connection count e.g.
+Each tick is a proxy and a connection count e.g.
 
 ```
   0s 2 2 2 2 2  -> 10 kwpm
